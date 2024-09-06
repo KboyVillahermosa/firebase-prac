@@ -1,21 +1,19 @@
 
-.google-login{
-    justify-content: center;
-    display: flex;
-    align-items: center;
-    height: 100vh;
-}
-.google-btn{
-    box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    border-radius: 8px;
-}
-.google-btn img{
-    width: 100%;
-    max-width: 50px;
+.login-header{
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
 }
 
-.google-image img{
-    width: 100%;
-    max-width: 500px;
+.login-content{
+  box-shadow: 0px 5px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 500px;
+}
+input{
+  width: 100%;
+  max-width: 1900px;
 }

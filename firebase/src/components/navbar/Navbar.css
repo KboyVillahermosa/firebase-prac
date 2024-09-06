@@ -43,3 +43,14 @@
     text-decoration: underline;
   }
   
+  .drop-down{
+    width: 100%;
+    max-width: 1500px;
+  }
+
+  /* Adjust if needed */
+.user-profile img {
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+}

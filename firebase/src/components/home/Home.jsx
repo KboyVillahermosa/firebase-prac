@@ -1,7 +1,5 @@
-// src/components/home/Home.jsx
-
 import React from "react";
-import "./Home.css";
+import "./Home.css"; // Make sure the CSS file is in the correct path
 
 const Home = ({ user, onLogout }) => {
     return (
