@@ -20,10 +20,10 @@
 .loading {
     --speed-of-animation: 0.9s;
     --gap: 6px;
-    --first-color: #4c86f9;
+    --first-color: #ef00b8;
     --second-color: #49a84c;
-    --third-color: #f6bb02;
-    --fourth-color: #f6bb02;
+    --third-color: #9a047f;
+    --fourth-color: #b80053;
     --fifth-color: #2196f3;
     display: flex;
     justify-content: center;

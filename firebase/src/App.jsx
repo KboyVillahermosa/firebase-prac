@@ -65,7 +65,6 @@ const App = () => {
                 <Header user={user} onLogout={handleLogout} />
                 <About />
                 <Content />
-                <Contact />
               </>
             } />
             <Route path="/main" element={<>

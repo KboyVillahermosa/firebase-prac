@@ -5,6 +5,7 @@ const navigation = [
   { name: 'Home', href: '/', current: false },
   { name: 'Search Job', href: '/main', current: false },
   { name: 'About Us', href: '#about', current: false },
+  { name: 'Contact', href: '/contact', current: false }
 ];
 
 function classNames(...classes) {
@@ -27,15 +28,18 @@ export default function Navbar({ user, onLogout }) {
             </DisclosureButton>
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+            <a href="/">
             <div className="flex flex-shrink-0 items-center">
               <img
                 alt="Your Company"
                 src="/logo3.png"
                 className="h-10 w-auto  rounded-full"
               />
-              <h1 className='text-white ml-3 font-bold
+              <h1 className='text-white ml-3 font-bold cursor-pointer inline
               '>Job<span className='font-extrabold text-gray-100'>Search</span></h1>
+             
             </div>
+            </a>
             <div className="hidden sm:ml-6 sm:block flex-1 justify-center">
               <div className="flex justify-center items-center space-x-4">
                 {navigation.map((item) => (
