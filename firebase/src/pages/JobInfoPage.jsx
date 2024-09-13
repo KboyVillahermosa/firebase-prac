@@ -58,7 +58,7 @@ function JobInfoPage() {
               </span>
             </div>
             <a href={state.page.job_apply_link} target="_blank" rel="noopener noreferrer">
-              <button className="bg-primary mb-4 text-white bg-blue-500 px-4 py-2 text-base rounded-md flex-none hover:bg-sky-700">
+              <button className="bg-primary mb-4 text-white bg-pink-500 px-4 py-2 text-base rounded-md flex-none hover:bg-pink-600">
                 Apply Now
               </button>
             </a>
@@ -98,7 +98,7 @@ function JobInfoPage() {
           <div className="mb-8">
             <h3 className="text-lg font-bold mb-4">Job Info:</h3>
             <hr className="mb-4 border-secondary" />
-            <div className="font-Poppins whitespace-break-spaces text-sm leading-relaxed">
+            <div className="font-Poppins whitespace-break-spaces text-sm leading-relaxed font-semibold">
               {parse(des)}
             </div>
           </div>

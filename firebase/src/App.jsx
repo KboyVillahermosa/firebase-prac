@@ -15,9 +15,11 @@ import Contact from "./components/contact/Contact";
 import Header from "./components/header/Header";
 import MainPage from "./pages/MainPage";
 import JobInfoPage from "./pages/JobInfoPage";
-import AdminPage from "./components/admin/Admin";
-import Content from "./components/content/Content"
+import AdminPage from "./components/admin-page/AdminPage";
+import AdminLogin from "./components/admin/AdminLogin";
+import Content from "./components/content/Content";
 import "./App.css";
+import ResumeMaker from "./components/rusume/ResumeMaker";
 
 const auth = getAuth(app);
 
@@ -64,21 +66,16 @@ const App = () => {
               <>
                 <Header user={user} onLogout={handleLogout} />
                 <About />
-                <Content />
+                <Content />      
               </>
             } />
-            <Route path="/main" element={<>
-              <MainPage />
-            
-            
-            </>} />
-
+            <Route path="/resume" element={<ResumeMaker />} />
+            <Route path="/main" element={<MainPage />} />
             <Route path="/job-info" element={<JobInfoPage />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/admin" element={
-              <AdminPage user={user} onLogout={handleLogout} />
-            } />
+            <Route path="/admin" element={user ? <AdminPage user={user} onLogout={handleLogout} /> : <Navigate to="/admin-login" />} />
+            <Route path="/admin-login" element={<AdminLogin onLogin={setUser} />} />
             <Route path="/" element={<Navigate to="/home" />} />
           </Routes>
         </>
@@ -86,6 +83,7 @@ const App = () => {
         <Routes>
           <Route path="/home" element={<GoogleLogin onLogin={setUser} />} />
           <Route path="/register" element={<CreateAccount onRegister={setUser} />} />
+      
           <Route path="*" element={<Navigate to="/home" />} />
         </Routes>
       )}

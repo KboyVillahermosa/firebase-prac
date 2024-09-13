@@ -112,7 +112,7 @@ function MainPage() {
         </svg>
       </div>
       <div className=" font-Poppins max-w-full p-4 text-xl md:p-8 cursor-pointer ">
-        JobFinder
+        SearchJob
       </div>
       {error != null && (
         <div className="bg-primary text-sm rounded text-white font-Poppins max-w-full p-4 mx-4 mb-4 md:p-8 md:mx-8 md:mb-8">

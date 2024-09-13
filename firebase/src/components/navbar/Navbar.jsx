@@ -5,7 +5,8 @@ const navigation = [
   { name: 'Home', href: '/', current: false },
   { name: 'Search Job', href: '/main', current: false },
   { name: 'About Us', href: '#about', current: false },
-  { name: 'Contact', href: '/contact', current: false }
+  { name: 'Contact', href: '/contact', current: false },
+  { name: 'Make a Resume', href: '/resume', current: false }
 ];
 
 function classNames(...classes) {
@@ -16,7 +17,7 @@ export default function Navbar({ user, onLogout }) {
   console.log('User photoURL:', user?.photoURL); // Debugging line
 
   return (
-    <Disclosure as="nav" className="bg-pink-500 z-10 fixed w-full">
+    <Disclosure as="nav" className="bg-pink-500">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">

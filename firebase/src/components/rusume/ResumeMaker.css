@@ -1,0 +1,27 @@
+
+.header{
+    justify-content: center;
+    display: flex;
+    margin-top: 100px;
+}
+
+.resume-header{
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+     display: flex;
+}
+.add-content{
+    width: 100%;
+    max-width: 900px;
+
+}
+.resume-content{
+    width: 100%;
+    max-width: 900px;
+}
+.resume-img{
+    width: 100%;
+    max-width: 300px;
+    height: 30vh;
+}

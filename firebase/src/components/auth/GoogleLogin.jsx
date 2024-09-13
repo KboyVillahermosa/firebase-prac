@@ -5,11 +5,13 @@ import {
   signInWithPopup,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { app } from "../../firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
+import { app, db } from "../../firebaseConfig";
 import CreateAccount from "./CreateAccount";
-import "./GoogleLogin.css"; // Ensure this CSS file contains only additional custom styles if needed
+import "./GoogleLogin.css";
 import Lottie from "lottie-react";
-import animationData from './Animation - 1725342088422.json'
+import animationData from './image.json';
+
 const ErrorModal = ({ message, onClose }) => {
   if (!message) return null;
 
@@ -38,47 +40,57 @@ const GoogleLogin = ({ onLogin }) => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setLoading(true);
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        onLogin(result.user);
-      })
-      .catch((error) => {
-        setErrorMessage("An error occurred while logging in with Google.");
-        console.log(error);
-      })
-      .finally(() => setLoading(false));
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Add user info to Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        displayName: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        loginType: "Google",
+      });
+
+      onLogin(user);
+    } catch (error) {
+      setErrorMessage("An error occurred while logging in with Google.");
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleEmailLogin = (e) => {
+  const handleEmailLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    signInWithEmailAndPassword(auth, email, password)
-      .then((result) => {
-        onLogin(result.user);
-      })
-      .catch((error) => {
-        if (error.code === "auth/user-not-found") {
-          setErrorMessage("This account is not registered.");
-        } else if (error.code === "auth/wrong-password") {
-          setErrorMessage("Wrong email or password.");
-        } else {
-          setErrorMessage("An error occurred while logging in.");
-        }
-      })
-      .finally(() => setLoading(false));
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      onLogin(result.user);
+    } catch (error) {
+      if (error.code === "auth/user-not-found") {
+        setErrorMessage("This account is not registered.");
+      } else if (error.code === "auth/wrong-password") {
+        setErrorMessage("Wrong email or password.");
+      } else {
+        setErrorMessage("An error occurred while logging in.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="login-header">
-      
-      <ErrorModal message={errorMessage} onClose={() => setErrorMessage("")} />
+    <div className="login-container">
       <div className="login-content">
+        <ErrorModal message={errorMessage} onClose={() => setErrorMessage("")} />
         {isRegistering ? (
           <CreateAccount onRegister={onLogin} />
         ) : (
           <form onSubmit={handleEmailLogin} className="space-y-4">
+              <h1 className="mb-5 text-4xl text-pink-500 font-bold justify-center flex">Login</h1>
             <input
               type="email"
               placeholder="Email"
@@ -98,10 +110,8 @@ const GoogleLogin = ({ onLogin }) => {
             <button
               type="submit"
               disabled={loading}
-              className={`p-2 text-white rounded-md ${
-                loading
-                  ? "bg-pink-300 cursor-not-allowed"
-                  : "bg-pink-500 hover:bg-pink-600"
+              className={`p-2 text-white rounded-md w-full ${
+                loading ? "bg-pink-300 cursor-not-allowed" : "bg-pink-500 hover:bg-pink-600"
               }`}
             >
               {loading ? "Logging in..." : "Login"}
@@ -115,13 +125,14 @@ const GoogleLogin = ({ onLogin }) => {
           </form>
         )}
         <div
-          className="mt-4 justify-center text-center flex  cursor-pointer"
+          className="mt-4 justify-center text-center flex cursor-pointer"
           onClick={handleLogin}
         >
           <img src="/google.png" alt="Google logo" className="w-6 h-6 mr-2" />
           <h1 className="text-pink-500 text-xl">Continue with Google</h1>
         </div>
       </div>
+      <div className="login-image shadow-lg bg-pink-100"></div>
     </div>
   );
 };

@@ -2,8 +2,7 @@
 import React, { useState } from 'react';
 import { db } from '../../firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
-import Lottie from 'lottie-react';
-import animationData from './Animation - 1725780755799 (1).json'
+
 import { FaFacebook, FaInstagramSquare, FaGithubSquare } from "react-icons/fa";
 
 import './Contact.css'
@@ -43,9 +42,7 @@ const ContactForm = () => {
 
   return (
     <>
-    <div className="contact-title">
-      <h1>CONTACT</h1>
-    </div>
+  
     <div className="contact-header p-4  rounded-lg">
        <div className="absolute inset-0 -z-10 overflow-hidden">
         <svg
@@ -74,7 +71,7 @@ const ContactForm = () => {
         </svg>
       </div>
       <div className="contact-image">
-      <h1 className='text-4xl font-medium text-gray-700 mb-2'>Contact Us</h1>
+      <h1 className='text-4xl font-medium text-pink-500 font-bold mb-2'>Contact Us</h1>
       <p className='text-gray-600'>We'd love to hear from you! Whether you have questions, feedback, or need assistance, feel free to reach out.
          Our team is here to help with any inquiries you may have. Simply fill out our contact form, and we’ll get back to you as soon as possible.
           We're committed to providing top-notch support, so don't hesitate to get in touch!</p>

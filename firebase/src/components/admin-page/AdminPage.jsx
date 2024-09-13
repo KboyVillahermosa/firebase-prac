@@ -1,71 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import { getAuth, signOut } from 'firebase/auth';
-import { getFirestore, collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
-import './AdminPage.css';
+import React, { useState, useEffect } from 'react';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../../firebaseConfig';
 
-const auth = getAuth();
-const db = getFirestore();
-
-const AdminPage = ({ user, onLogout }) => {
+const AdminPage = ({ onLogout }) => {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Example admin check
-    if (!user || !user.email.endsWith('@admin.com')) {
-      // Redirect or handle unauthorized access
-      return <Navigate to="/home" />;
-    }
-
     const fetchUsers = async () => {
       try {
-        setLoading(true);
         const usersCollection = collection(db, 'users');
-        const userSnapshot = await getDocs(usersCollection);
-        const userList = userSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setUsers(userList);
+        const userDocs = await getDocs(usersCollection);
+        const usersList = userDocs.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setUsers(usersList);
       } catch (error) {
-        console.error("Error fetching users:", error);
-        setError('Failed to load users.');
-      } finally {
-        setLoading(false);
+        console.error("Error fetching users: ", error);
       }
     };
 
     fetchUsers();
-  }, [user]);
+  }, []);
 
-  const handleDelete = async (userId) => {
+  const handleDeleteUser = async (userId) => {
+    const confirmation = window.confirm("Are you sure you want to delete this user?");
+    if (!confirmation) return;
+
     try {
+      // Delete user from Firestore
       await deleteDoc(doc(db, 'users', userId));
-      setUsers(users.filter(user => user.id !== userId));
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      setError('Failed to delete user.');
-    }
-  };
 
-  const handleLogout = () => {
-    signOut(auth).catch(error => {
-      console.error("Error signing out:", error);
-    });
+      // Make API call to delete user from Firebase Authentication (backend API)
+      const response = await fetch('/delete-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ uid: userId }), // Send UID to the backend
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data.message);
+        setUsers(users.filter(user => user.id !== userId));
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting user: ", error);
+    }
   };
 
   return (
     <div className="admin-page">
-      <button onClick={handleLogout}>Logout</button>
-      <h1>User Management</h1>
-      {loading && <p>Loading...</p>}
-      {error && <p className="error">{error}</p>}
+      <h1>Admin Page</h1>
+      <button onClick={onLogout}>Logout</button>
+      <h2>Registered Users</h2>
       <ul>
-        {users.map(user => (
-          <li key={user.id}>
-            <p>{user.email}</p>
-            <button onClick={() => handleDelete(user.id)}>Delete</button>
+        {users.map((user) => (
+          <li key={user.id} className="flex items-center space-x-2">
+            <img src={user.photoURL || '/path/to/default/profile/pic.png'} alt="Profile" className="h-8 w-8 rounded-full"/>
+            <div>
+              <p>{user.displayName}</p>
+              <p>{user.email}</p>
+              <p>Login Type: {user.loginType}</p>
+            </div>
+            <button 
+              onClick={() => handleDeleteUser(user.id)} 
+              className="ml-4 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>
+      <a href="/">logout</a>
     </div>
   );
 };

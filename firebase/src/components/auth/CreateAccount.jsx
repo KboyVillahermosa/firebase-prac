@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore'; 
 import { useNavigate } from 'react-router-dom';
-import { app } from '../../firebaseConfig';
-import './CreateAccount.css';
+import { app, db } from '../../firebaseConfig'; 
+import './CreateAccounts.css';
 
 const auth = getAuth(app);
 
@@ -29,20 +30,41 @@ const CreateAccount = ({ onRegister }) => {
     setLoading(true);
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
+      const user = result.user;
+
+      // If an image is uploaded, update profile with photoURL
       if (image) {
         const reader = new FileReader();
         reader.onload = async () => {
-          await updateProfile(result.user, {
+          await updateProfile(user, {
             displayName: name,
-            photoURL: reader.result
+            photoURL: reader.result,
           });
-          onRegister(result.user);
+
+          // Add user info to Firestore
+          await setDoc(doc(db, "users", user.uid), {
+            displayName: name,
+            email: user.email,
+            photoURL: reader.result,
+            loginType: "Email",
+          });
+
+          onRegister(user);
         };
         reader.readAsDataURL(image);
       } else {
-        await updateProfile(result.user, { displayName: name });
-        onRegister(result.user);
+        await updateProfile(user, { displayName: name });
+
+        // Add user info to Firestore (without image)
+        await setDoc(doc(db, "users", user.uid), {
+          displayName: name,
+          email: user.email,
+          loginType: "Email",
+        });
+
+        onRegister(user);
       }
+
       navigate('/home');
     } catch (error) {
       console.log(error);
@@ -54,6 +76,7 @@ const CreateAccount = ({ onRegister }) => {
   return (
     <div className="create-account">
       <div className="create-content">
+      <h1 className="mb-5 text-4xl text-pink-500 font-bold justify-center flex">Create an Account</h1>
         <form onSubmit={handleRegister} className="space-y-4">
           <input
             type="text"
@@ -87,30 +110,30 @@ const CreateAccount = ({ onRegister }) => {
             required
             className="input-field rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
           />
+
           <div className="file-input-wrapper">
-  <input
-    type="file"
-    id="file-upload"
-    onChange={(e) => setImage(e.target.files[0])}
-    className="file-input-hidden"
-  />
-  <label htmlFor="file-upload" className="file-input-label">
-    Choose File
-  </label>
-  {image && <span className="file-name">{image.name}</span>}
-</div>
+            <input
+              type="file"
+              id="file-upload"
+              onChange={(e) => setImage(e.target.files[0])}
+              className="file-input-hidden"
+            />
+            <label htmlFor="file-upload" className="file-input-label">
+              Choose File
+            </label>
+            {image && <span className="file-name">{image.name}</span>}
+          </div>
 
           <button
             type="submit"
             disabled={loading}
             className={`submit-button ${loading ? 'bg-pink-300 cursor-not-allowed' : 'bg-pink-500 hover:bg-pink-600'}`}
           >
-            {loading ? "Creating Account..." : "Create Account"}
+            {loading ? 'Creating Account...' : 'Create Account'}
           </button>
-          <p className="text-center">
-            <span className="text-gray-500">Already have an account?</span>
-            <a href="/home" className="text-pink-500 ml-1">Login</a>
-          </p>
+          <div className="already justify-center flex">
+           <a href="/google-login" className='text-pink-500'> Already Have an Account? <span className='text-pink-500'>Login</span></a>
+          </div>
         </form>
       </div>
     </div>
